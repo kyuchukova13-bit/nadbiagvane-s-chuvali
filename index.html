@@ -2,144 +2,118 @@
 <html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>СЪСТЕЗАНИЕ С ЧУВАЛИ - УЧИТЕЛСКА ВЕРСИЯ</title>
+    <title>СЪСТЕЗАНИЕ С ЧУВАЛИ - ВЕРСИЯ С ВАРИАНТИ</title>
     <style>
         body { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: #f0f4f8; }
-
-        /* АРЕНА */
-        .arena {
-            height: 45vh;
-            background: linear-gradient(180deg, #4fc3f7 0%, #a5d6a7 100%);
-            position: relative;
-            border-bottom: 8px solid #fff;
-        }
-
+        .arena { height: 45vh; background: linear-gradient(180deg, #4fc3f7 0%, #a5d6a7 100%); position: relative; border-bottom: 8px solid #fff; }
         .lane { height: 50%; position: relative; display: flex; align-items: flex-end; padding-bottom: 5px; }
-
-        .girl {
-            position: absolute; height: 60%; left: 20px; transform: scaleX(-1);
-            transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 5; bottom: 10px;
-        }
-
-        /* АНИМАЦИЯ НА ПОДСКОКА */
+        .girl { position: absolute; height: 60%; left: 20px; transform: scaleX(-1); transition: left 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 5; bottom: 10px; }
         .jumping { animation: hop-real 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
-        @keyframes hop-real {
-            0%, 100% { bottom: 10px; transform: scaleX(-1) scaleY(1); }
-            40% { bottom: 80px; transform: scaleX(-1) scaleY(1.1); }
-            90% { bottom: 10px; transform: scaleX(-1) scaleY(0.9); }
-        }
-
+        @keyframes hop-real { 0%, 100% { bottom: 10px; transform: scaleX(-1) scaleY(1); } 40% { bottom: 80px; transform: scaleX(-1) scaleY(1.1); } 90% { bottom: 10px; transform: scaleX(-1) scaleY(0.9); } }
         .victory-dance { animation: hop-real 0.4s infinite; }
-
-        /* ФИНАЛНА ЛЕНТА */
         .finish-line-container { position: absolute; right: 120px; top: 0; bottom: 0; width: 20px; z-index: 10; }
-        .tape-part { 
-            position: absolute; width: 100%; height: 50%; background: #ff1744; 
-            transition: transform 0.5s ease-in, opacity 0.5s; border-left: 2px solid white;
-        }
+        .tape-part { position: absolute; width: 100%; height: 50%; background: #ff1744; transition: transform 0.5s ease-in, opacity 0.5s; border-left: 2px solid white; }
         .tape-top { top: 0; transform-origin: top; }
         .tape-bottom { bottom: 0; transform-origin: bottom; }
         .tape-cut .tape-top { transform: rotate(-110deg) translateY(-50px); opacity: 0; }
         .tape-cut .tape-bottom { transform: rotate(110deg) translateY(50px); opacity: 0; }
-
-        /* КОНТРОЛИ */
         .controls { height: 55vh; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 15px; box-sizing: border-box; }
         .player-box { background: white; border-radius: 20px; border: 4px solid #1a237e; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .sentence-area { width: 95%; min-height: 80px; background: #e3f2fd; border-radius: 15px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 20px; padding: 15px; align-items: center; font-size: 1.8rem; font-weight: bold; color: #1a237e; border: 3px dashed #1a237e; }
+        .sentence-area { width: 95%; min-height: 80px; background: #e3f2fd; border-radius: 15px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 15px; padding: 15px; align-items: center; font-size: 1.8rem; font-weight: bold; color: #1a237e; border: 3px dashed #1a237e; }
         .word-pool { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
         .word-card { background: #1a237e; color: white; border: none; padding: 12px 24px; font-size: 1.6rem; border-radius: 12px; cursor: pointer; box-shadow: 0 5px 0 #0d1440; }
-        .word-card.hidden { visibility: hidden; }
-
-        /* ЕКРАНИ (ОУВЪРЛЕИ) */
+        .word-card.hidden { visibility: hidden; pointer-events: none; }
         .overlay { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.98); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); }
-        .card { background: white; padding: 40px; border-radius: 30px; border: 8px solid #1a237e; text-align: center; max-width: 80%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
-        
-        /* ПАНЕЛ УЧИТЕЛ */
+        .card { background: white; padding: 30px; border-radius: 30px; border: 8px solid #1a237e; text-align: center; max-width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.15); }
         .teacher-panel { display: none; overflow-y: auto; padding: 20px; }
-        .sentence-row { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; }
-        .sentence-row input { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #ddd; }
-        .btn-panel { background: #455a64; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 5px; }
-
-        .win-banner { padding: 30px 60px; border-radius: 40px; color: white; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .sentence-row { display: flex; gap: 10px; margin-bottom: 10px; width: 100%; align-items: center; }
+        .sentence-row input { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid #ddd; font-size: 1rem; }
+        .btn-panel { background: #455a64; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 5px; font-weight: bold; }
+        .win-banner { padding: 30px 60px; border-radius: 40px; color: white; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="start-screen" class="overlay">
     <div class="card">
-        <h1 style="color:#1a237e; font-size: 3.5rem; margin-top: 0;">СЪСТЕЗАНИЕ С ЧУВАЛИ</h1>
-        <div style="font-size: 1.4rem; color: #555; margin-bottom: 25px; line-height: 1.6;">
+        <h1 style="color:#1a237e; font-size: 3rem; margin-bottom: 10px;">СЪСТЕЗАНИЕ С ЧУВАЛИ</h1>
+        <div style="font-size: 1.2rem; color: #555; margin-bottom: 25px; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 15px;">
             <strong>ИНСТРУКЦИИ:</strong><br>
-            Двата отбора се състезават да подредят изречението първи.<br>
-            Кликни върху думите в правилния ред, за да накараш играча да подскача към финала!<br>
-            🏆 Победител е този, който пръв среже финалната лента.
+            • Подредете изречението правилно.<br>
+            • Всяка вярна дума ви придвижва към финала.<br>
+            • Внимавайте за словореда!
         </div>
         <div style="display:flex; gap:20px; justify-content: center;">
-            <button class="word-card" style="background:#4caf50; padding: 20px 50px; font-size: 2rem;" onclick="globalStart()">🚀 СТАРТ</button>
-            <button class="word-card" style="background:#607d8b; padding: 20px 40px; font-size: 1.8rem;" onclick="toggleTeacher(true)">⚙️ ПАНЕЛ</button>
+            <button class="word-card" style="background:#4caf50;" onclick="globalStart()">🚀 СТАРТ</button>
+            <button class="word-card" style="background:#607d8b;" onclick="toggleTeacher(true)">⚙️ ПАНЕЛ</button>
         </div>
         <div style="margin-top: 20px; font-style: italic; color: #888;">Автор: Дочка Кючукова</div>
     </div>
 </div>
 
 <div id="teacher-panel" class="overlay teacher-panel">
-    <div class="card" style="max-width: 900px; width: 90%;">
+    <div class="card" style="max-width: 950px; width: 95%;">
         <h2 style="color:#1a237e;">⚙️ УЧИТЕЛСКИ ПАНЕЛ</h2>
-        <div id="sentence-list" style="max-height: 350px; overflow-y: auto; margin-bottom: 20px; padding: 10px;"></div>
+        <div style="background:#e8f4fd; color:#1a237e; padding:15px; border-radius:12px; margin-bottom:15px; font-size:0.9rem; text-align: left; border-left: 6px solid #1a237e;">
+            <strong>📝 ИНСТРУКЦИЯ ЗА ВАРИАНТИ:</strong><br>
+            Разделете различните подредби с наклонена черта <b>/</b>.<br>
+            <i>Пример: Котката пие мляко / Пие мляко котката</i>
+        </div>
+        <div id="sentence-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
         <button class="btn-panel" style="background:#2ecc71;" onclick="addSentence()">➕ Добави изречение</button>
         <hr>
         <button class="btn-panel" onclick="downloadData()">💾 Запази списък</button>
         <button class="btn-panel" onclick="document.getElementById('fileInput').click()">📂 Зареди файл</button>
-        <button class="btn-panel" style="background:#f44336;" onclick="toggleTeacher(false)">❌ Затвори и запази</button>
+        <button class="btn-panel" style="background:#f44336;" onclick="toggleTeacher(false)">❌ Затвори</button>
         <input type="file" id="fileInput" style="display:none" onchange="uploadData(event)">
     </div>
 </div>
 
 <div id="victory-layer" class="overlay" style="display:none;">
     <div class="win-banner" id="banner-bg">
-        <div id="win-text" style="font-size: 3.5rem; font-weight: 900;">ПОБЕДА!</div>
-        <div id="final-time" style="font-size: 1.8rem; margin-top: 10px;"></div>
+        <div id="win-text" style="font-size: 3rem; font-weight: 900;">ПОБЕДА!</div>
+        <div id="final-time" style="font-size: 1.5rem; margin-top: 10px;"></div>
     </div>
-    <div style="font-size: 1.6rem; color: #555; margin-top: 25px;">Печелившото изречение:</div>
-    <div id="victory-sentence" style="font-size: 2.2rem; font-weight: bold; color: #1a237e; margin: 20px; background: #fff; padding: 25px; border: 6px solid #ffd700; border-radius: 20px; text-align: center;"></div>
-    <button class="word-card" style="background:#1a237e; padding: 20px 60px; font-size: 2rem;" onclick="location.reload()">🔄 ИГРАЙ ПАК</button>
+    <div id="victory-sentence" style="font-size: 1.8rem; font-weight: bold; color: #1a237e; margin: 20px; background: #fff; padding: 20px; border-radius: 20px; border: 4px solid #ffd700;"></div>
+    <button class="word-card" onclick="location.reload()">🔄 НОВА ИГРА</button>
 </div>
 
 <div class="arena">
-    <div id="timer-box" style="display:none; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(0,0,0,0.7); color: white; padding: 10px 30px; border-radius: 30px; font-size: 1.8rem;">0 сек</div>
-
+    <div id="timer-box" style="display:none; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 20; background: rgba(0,0,0,0.7); color: white; padding: 10px 25px; border-radius: 30px; font-size: 1.5rem;">0 сек</div>
     <div class="finish-line-container" id="finish-line">
         <div class="tape-part tape-top"></div>
         <div class="tape-part tape-bottom"></div>
     </div>
-    
     <div class="lane"><img src="28.png" id="girl1" class="girl"></div>
     <div class="lane" style="border-top: 4px dashed rgba(255,255,255,0.4);"><img src="29.png" id="girl2" class="girl" style="bottom: 45px;"></div>
 </div>
 
 <div class="controls">
     <div class="player-box">
-        <div style="font-size: 1.2rem; font-weight: bold; color: #1a237e; margin-bottom: 5px;">🔵 СИН ОТБОР</div>
+        <div style="font-weight: bold; color: #1a237e;">🔵 СИН ОТБОР</div>
         <div class="sentence-area" id="result1"></div>
         <div class="word-pool" id="pool1"></div>
     </div>
     <div class="player-box" style="border-color: #d32f2f;">
-        <div style="font-size: 1.2rem; font-weight: bold; color: #d32f2f; margin-bottom: 5px;">🔴 ЧЕРВЕН ОТБОР</div>
+        <div style="font-weight: bold; color: #d32f2f;">🔴 ЧЕРВЕН ОТБОР</div>
         <div class="sentence-area" id="result2"></div>
         <div class="word-pool" id="pool2"></div>
     </div>
 </div>
 
 <script>
-    // Начални данни
     let masterData = [
-        "котката пие топло мляко", "слънцето грее силно днес", "децата играят щастливо навън",
-        "мама готви вкусна супа", "птиците пеят в гората", "баба пече вкусна баница",
-        "татко чете интересен вестник", "ученикът пише в тетрадката"
+        "котката пие топло мляко / топло мляко пие котката", 
+        "слънцето грее силно днес / днес слънцето грее силно", 
+        "децата играят щастливо навън"
     ];
 
-    let state = { 1: { target: [], current: 0, fullText: "" }, 2: { target: [], current: 0, fullText: "" } };
+    // Инициализираме обекта state с всички необходими масиви
+    let state = { 
+        1: { allVariants: [], usedWords: [], current: 0, totalWords: 0 }, 
+        2: { allVariants: [], usedWords: [], current: 0, totalWords: 0 } 
+    };
+    
     let startTime, timerInterval;
 
     function toggleTeacher(show) {
@@ -153,16 +127,16 @@
             <div class="sentence-row">
                 <span>${i+1}.</span>
                 <input type="text" value="${s}" onchange="masterData[${i}]=this.value">
-                <button onclick="masterData.splice(${i},1);renderTeacherList()" style="color:red; cursor:pointer;">❌</button>
+                <button onclick="masterData.splice(${i},1);renderTeacherList()" style="color:red; background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
             </div>
         `).join('');
     }
 
-    function addSentence() { masterData.push("ново изречение"); renderTeacherList(); }
+    function addSentence() { masterData.push("нова дума / дума нова"); renderTeacherList(); }
 
     function downloadData() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData));
-        const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "shatafeta_izrechenia.json"); dl.click();
+        const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "izrechenia.json"); dl.click();
     }
 
     function uploadData(ev) {
@@ -182,13 +156,23 @@
     }
 
     function initPlayer(p) {
-        const sentence = masterData[Math.floor(Math.random() * masterData.length)];
-        const words = sentence.trim().toLowerCase().split(/\s+/);
-        state[p].target = words;
-        state[p].fullText = sentence.charAt(0).toUpperCase() + sentence.slice(1) + ".";
+        const rawInput = masterData[Math.floor(Math.random() * masterData.length)];
+        
+        // Масив от всички възможни подредби (варианти)
+        const variants = rawInput.split('/').map(v => v.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0));
+        
+        state[p].allVariants = variants;
+        state[p].usedWords = [];
+        state[p].current = 0;
+        state[p].totalWords = variants[0].length; // Всички варианти трябва да имат еднакъв брой думи
+
+        // Създаваме уникален списък с думи за бутоните
+        const uniqueWords = [...new Set(variants.flat())];
         
         const pool = document.getElementById(`pool${p}`);
-        [...words].sort(() => Math.random() - 0.5).forEach(w => {
+        pool.innerHTML = "";
+        
+        uniqueWords.sort(() => Math.random() - 0.5).forEach(w => {
             const btn = document.createElement("button");
             btn.className = "word-card";
             btn.innerText = w;
@@ -198,21 +182,35 @@
     }
 
     function verify(p, word, btn) {
-        if (word === state[p].target[state[p].current]) {
-            let displayWord = (state[p].current === 0) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
-            if (state[p].current === state[p].target.length - 1) displayWord += ".";
+        // Проверяваме дали текущата дума съвпада с ПОНЕ ЕДИН валиден вариант, 
+        // който започва с вече въведените думи
+        const isValid = state[p].allVariants.some(variant => {
+            const matchesSoFar = state[p].usedWords.every((w, i) => variant[i] === w);
+            return matchesSoFar && variant[state[p].current] === word;
+        });
 
+        if (isValid) {
+            state[p].usedWords.push(word);
             state[p].current++;
+            
+            let displayWord = (state[p].current === 1) ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+            
+            // Проверяваме дали сме на края на някой от вариантите
+            const isAtEnd = (state[p].current === state[p].totalWords);
+            if (isAtEnd) displayWord += ".";
+
             btn.classList.add("hidden");
-            const span = document.createElement("span"); span.innerText = displayWord;
+            const span = document.createElement("span"); 
+            span.innerText = displayWord + " ";
             document.getElementById(`result${p}`).appendChild(span);
             
             move(p);
-            if (state[p].current === state[p].target.length) {
+            
+            if (isAtEnd) {
                 document.getElementById('finish-line').classList.add('tape-cut');
                 const winner = document.getElementById(`girl${p}`);
                 setTimeout(() => winner.classList.add('victory-dance'), 600);
-                setTimeout(() => finish(p), 2000);
+                setTimeout(() => finish(p), 1500);
             }
         } else {
             btn.style.background = "#f44336";
@@ -224,7 +222,7 @@
         const girl = document.getElementById(`girl${p}`);
         const arenaWidth = document.querySelector('.arena').offsetWidth - 160; 
         girl.classList.add("jumping");
-        girl.style.left = (20 + (state[p].current / state[p].target.length) * arenaWidth) + "px";
+        girl.style.left = (20 + (state[p].current / state[p].totalWords) * arenaWidth) + "px";
         setTimeout(() => girl.classList.remove("jumping"), 450);
     }
 
@@ -232,9 +230,9 @@
         clearInterval(timerInterval);
         document.getElementById('victory-layer').style.display = "flex";
         document.getElementById('win-text').innerText = `🏆 ПОБЕДА ЗА ${p === 1 ? 'СИНИЯ' : 'ЧЕРВЕНИЯ'} ОТБОР!`;
-        document.getElementById('final-time').innerText = `Време за подреждане: ${document.getElementById('timer-box').innerText}`;
+        document.getElementById('final-time').innerText = `Време: ${document.getElementById('timer-box').innerText}`;
         document.getElementById('banner-bg').style.background = p === 1 ? "#1a237e" : "#d32f2f";
-        document.getElementById('victory-sentence').innerText = state[p].fullText;
+        document.getElementById('victory-sentence').innerText = state[p].usedWords.join(" ");
     }
 </script>
 </body>
